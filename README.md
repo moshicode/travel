@@ -1,5 +1,5 @@
 
-LIVE: https://github.com/moshicode/travel
+LIVE: http://moshicode.github.io/travel
 
 // CONTACTS LIST
 # ADD CONTACT BY FORM
