@@ -1,56 +1,26 @@
-import React, { useState } from "react";
-import Contact from "./components/Contact";
+import React, { useState, useEffect } from "react";
+
+import ContactCard from "./components/ContactCard";
+import data from "./data"; // DEMO DATA
+
+import ContactForm from "./components/contactForm";
+import axios from "axios";
 
 import "./App.css";
-import ContactForm from "./components/contactForm";
 
 function App() {
-  const [contacts, setContacts] = useState([
-    {
-      fName: "John Smith",
-      address: "Riviera State 32/106",
-      company: "Twitter",
-      job: "Graphic designer",
-      phone: "0544884536",
-      company_address: "795 Folsom Ave, Suit 600",
-      img: "john-smith",
-      id: 1,
-    },
-    {
-      fName: "John Smith",
-      address: "Riviera State 32/106",
-      company: "Twitter",
-      job: "Graphic designer",
-      phone: "0544884536",
-      company_address: "795 Folsom Ave, Suit 600",
-      img: "john-smith",
-      id: 2,
-    },
-    {
-      fName: "John Smith",
-      address: "Riviera State 32/106",
-      company: "Twitter",
-      job: "Graphic designer",
-      phone: "0544884536",
-      company_address: "795 Folsom Ave, Suit 600",
-      img: "john-smith",
-      id: 3,
-    },
-  ]);
-
-  const [viewModal, setModal] = useState(false);
+  const [contacts, setContacts] = useState(data);
 
   const generateUID = () => "_" + Math.random().toString(36).substr(2, 9);
 
-  const addContact = (newContact) => {
-    const newContactsList = [
-      ...contacts,
-      {
-        ...newContact,
-        id: generateUID(),
-      },
-    ];
-    setContacts(newContactsList);
+  const addContact = async (contactData) => {
+    const newContact = Object.assign(contactData, {
+      id: await generateUID(),
+      location: await getLocation(contactData.country),
+    });
+
+    const newContactList = await [...contacts, newContact];
+    await setContacts(newContactList);
   };
 
   const removeContact = (contactId) => {
@@ -61,33 +31,39 @@ function App() {
     setContacts(newContactList);
   };
 
+  const getLocation = async (country) => {
+    try {
+      const locationData = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${country}&key=3f0de760833f4f2f928d25fcf57973b0`
+      );
+      console.log(locationData.data.results[0].annotations.DMS.lat);
+      return await {
+        lat: locationData.data.results[0].annotations.DMS.lat,
+        long: locationData.data.results[0].annotations.DMS.lng,
+      };
+    } catch (e) {
+      console.log(e);
+      return "Error occurred while saving task";
+    }
+  };
+
   return (
-    <div className="App">
-      {viewModal && <ContactForm />}
-      <div className="container">
+    <>
+      <div className="container contact-list">
         <div className="row">
-          <div className="contact-list">
-            {contacts.map((contact, index) => (
-              <Contact
-                key={index}
-                id={contact.id}
-                contact={contact}
-                removeContact={removeContact}
-              />
-            ))}
-            <div className="col-md-6 add-new">
-              <button>
-                <i
-                  className="fa fa-plus"
-                  aria-hidden="true"
-                  onClick={() => setModal(true)}
-                ></i>
-              </button>
-            </div>
-          </div>
+          {contacts.map((contact) => (
+            <ContactCard
+              key={contact.id}
+              id={contact.id}
+              contact={contact}
+              removeContact={removeContact}
+              getLocation={getLocation}
+            />
+          ))}
         </div>
       </div>
-    </div>
+      <ContactForm addContact={addContact} getLocation={getLocation} />
+    </>
   );
 }
 
