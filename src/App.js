@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-import ContactCard from "./components/ContactCard";
-import data from "./data"; // DEMO DATA
-
-import ContactForm from "./components/contactForm";
 import axios from "axios";
+import data from "./data"; // DEMO DATA
+import ContactCard from "./components/ContactCard";
+import ContactForm from "./components/ContactForm";
 
 import "./App.css";
 

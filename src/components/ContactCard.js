@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import contactImg from "../assets/123.jpg";
 
 function ContactCard(props) {
@@ -41,11 +41,7 @@ function ContactCard(props) {
               aria-hidden="true"
             ></i>
 
-            <i
-              onClick={() => props.removeContact(id)}
-              className="fa fa-pen"
-              aria-hidden="true"
-            ></i>
+            <i className="fa fa-pen" aria-hidden="true"></i>
           </div>
         </div>
       </div>
